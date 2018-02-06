@@ -7,14 +7,11 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      todos: [
-        {id: 1, description: "Walk the cat", isCompleted: true },
-        {id: 2, description: "Throw the dishes away", isCompleted: false },
-        {id: 3, description: "Buy new dishes", isCompleted: false }
-      ],
+      todos: [],
       newTodoDescription: ''
-      
     };
+      this.deleteTodo = this.deleteTodo.bind(this);
+
   }
 
   handleChange(e) {
@@ -24,7 +21,7 @@ class App extends Component {
   handleSubmit(e){
     e.preventDefault();
     if(!this.state.newTodoDescription) {return}
-    const newTodo = { description:this.state.newTodoDescription, isCompleted: false };
+    const newTodo = { id: this.state.todos.id, description:this.state.newTodoDescription, isCompleted: false };
     this.setState({ todos: [...this.state.todos, newTodo], newTodoDescription: '' });
   }
 
@@ -36,24 +33,26 @@ class App extends Component {
  }
 
  deleteTodo(id) {
-  this.setState((prevState) => ({
-    items: prevState.items.filter(item => item.id !== id),
-  }))
+   const remainingToDos = this.state.todos.filter((todo, remainingToDos) => {
+     return (todo.id !== remainingToDos.id)
+   });
+   this.setState({ todos: remainingToDos });
+
 }
 
   render() {
     return (
       <div className="App">
-        <ul>
-          {this.state.todos.map( (todo, index) =>
-            <ToDo key={ index } description= {todo.description} isCompleted={ todo.isCompleted } toggleComplete={ () => this.toggleComplete(index) } onClick={ () => this.deleteTodo } />
-          )}
-        </ul>
+        <h1>Add a ToDo!</h1>
         <form onSubmit={ (e) => this.handleSubmit(e) }>
           <input type="text" value={ this.state.newTodoDescription } onChange={ (e) => this.handleChange(e) } />
-          <input type="submit" />
-          <button text="Delete"/>
-        </form>
+          <input type="submit" value="Add Todo" />
+          </form>
+        <ul>
+          { this.state.todos.map( (todo,) =>
+            <ToDo key={ todo.id } description= {todo.description} isCompleted={ todo.isCompleted } toggleComplete={ () => this.toggleComplete(todo) } onDelete={ this.deleteTodo }  />
+          )}
+        </ul>
       </div>
     );
   }
